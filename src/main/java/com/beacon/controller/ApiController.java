@@ -1,38 +1,33 @@
 package com.beacon.controller;
 
 import com.beacon.entity.UuidMeaning;
-import com.beacon.service.UuidRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import com.beacon.dao.UuidRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Created by ZhangMengRou on 2018/6/2.
- */
-@Controller
+
+@RestController
 public class ApiController {
-    @Autowired
+
     private UuidRepository uuidRepository;
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    @ResponseBody
-    public String add(@RequestBody UuidMeaning uBean) {
-
-        uuidRepository.save(uBean);
-        return "200";
+    public ApiController(UuidRepository uuidRepository) {
+        this.uuidRepository = uuidRepository;
     }
-    @RequestMapping(value = "/get/{uuid}", method = RequestMethod.GET)
-    @ResponseBody
-    public String get(@PathVariable("uuid") String uuid) {
 
-        System.out.println(uuidRepository.findOneByUuid(uuid));
-        if (uuidRepository.findOneByUuid(uuid)==null)
-            return "null";
-        else {
-            return uuidRepository.findOneByUuid(uuid).getMessage();
-        }
+    @PostMapping
+    public UuidMeaning add(@RequestBody UuidMeaning uBean) {
+        return uuidRepository.save(uBean);
+    }
+
+    @GetMapping(value = "/{uuid}")
+    public UuidMeaning get(@PathVariable("uuid") String uuid) {
+        return uuidRepository.findOneByUuid(uuid);
+    }
+
+    @GetMapping
+    public List<UuidMeaning> getAll() {
+        return uuidRepository.findAll();
     }
 }
